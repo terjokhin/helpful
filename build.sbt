@@ -1,17 +1,31 @@
+import Dependencies._
+
 organization := "org.daron"
 
 name := "helpful"
 
 version := "0.0.1"
 
-scalaVersion := "2.13.2"
+scalaVersion := "2.13.3"
 
+lazy val distage = project
+  .in(file("distage"))
+  .settings(
+    common,
+    name := "distage",
+    scalacOptions ++= defaultOptions,
+    libraryDependencies ++= Izumi.all
+  )
 
+lazy val common = Seq(
+  libraryDependencies ++= Cats.all ++ Tofu.all ++ MUnit.all ++ Other.all,
+  libraryDependencies += compilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1"),
+  libraryDependencies += compilerPlugin("org.typelevel" %% "kind-projector" % "0.11.0" cross CrossVersion.full)
+)
 
-scalacOptions ++= Seq(
+lazy val defaultOptions = Seq(
   "-deprecation",
   "-unchecked",
-  "-Ymacro-annotations",
   "-language:implicitConversions",
   "-language:reflectiveCalls",
   "-language:higherKinds",
@@ -39,6 +53,3 @@ scalacOptions ++= Seq(
   "-Xlint:type-parameter-shadow",  // A local type parameter shadows a type already in scope.
   "-Xlint:constant"                // Evaluation of a constant arithmetic expression results in an error.
 )
-
-addCompilerPlugin("com.olegpy"    %% "better-monadic-for" % "0.3.1")
-addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.11.0" cross CrossVersion.full)
