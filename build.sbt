@@ -6,19 +6,20 @@ name := "helpful"
 
 version := "0.0.1"
 
-scalaVersion := "2.13.3"
-
 lazy val distage = project
   .in(file("distage"))
   .settings(
     common,
     name := "distage",
     scalacOptions ++= defaultOptions,
+    scalacOptions += "-Ymacro-annotations",
     libraryDependencies ++= Izumi.all
   )
 
 lazy val common = Seq(
-  libraryDependencies ++= Cats.all ++ Tofu.all ++ MUnit.all ++ Other.all,
+  organization := "org.daron",
+  scalaVersion := "2.13.3",
+  libraryDependencies ++= Akka.all ++ Cats.all ++ Circe.all ++ Tofu.all ++ MUnit.all ++ Other.all,
   libraryDependencies += compilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1"),
   libraryDependencies += compilerPlugin("org.typelevel" %% "kind-projector" % "0.11.0" cross CrossVersion.full)
 )
@@ -43,7 +44,6 @@ lazy val defaultOptions = Seq(
   "-Xlint:inaccessible",           // Warn about inaccessible types in method signatures.
   "-Xlint:infer-any",              // Warn when a type argument is inferred to be `Any`.
   "-Xlint:missing-interpolator",   // A string literal appears to be missing an interpolator id.
-  "-Xlint:nullary-override",       // Warn when non-nullary `def f()' overrides nullary `def f'.
   "-Xlint:nullary-unit",           // Warn when nullary methods return Unit.
   "-Xlint:option-implicit",        // Option.apply used implicit view.
   "-Xlint:package-object-classes", // Class or object defined in package object.
