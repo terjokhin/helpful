@@ -6,14 +6,14 @@ import akka.http.scaladsl.server.Route
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 import distage.{ModuleDef, TagK}
 import org.daron.distage.ToFuture
-import org.daron.distage.db.UserRepo
-import org.daron.distage.domain.User
+import org.daron.distage.db.OrderRepo
+import org.daron.distage.domain.Order
 
 import scala.util.{Failure, Success}
 
-class UserRoute[F[_]: ToFuture](repo: UserRepo[F]) {
+class OrderRoute[F[_]: ToFuture](repo: OrderRepo[F]) {
 
-  def route: Route = pathPrefix("users") {
+  def route: Route = pathPrefix("orders") {
     {
       (get & path(Segment)) { id =>
         onSuccess(ToFuture[F].toFuture(repo.find(id))) {
@@ -21,8 +21,8 @@ class UserRoute[F[_]: ToFuture](repo: UserRepo[F]) {
           case None    => complete(StatusCodes.NotFound)
         }
       }
-    } ~ (post & entity(as[User])) { u =>
-      onComplete(ToFuture[F].toFuture(repo.save(u))) {
+    } ~ (post & entity(as[Order])) { o =>
+      onComplete(ToFuture[F].toFuture(repo.save(o))) {
         case Success(saved) => complete(saved)
         case Failure(_)     => complete(StatusCodes.BadRequest)
       }
@@ -31,10 +31,10 @@ class UserRoute[F[_]: ToFuture](repo: UserRepo[F]) {
   }
 }
 
-object UserRoute {
+object OrderRoute {
 
-  def UserRouteModule[F[_]: TagK: ToFuture] = new ModuleDef {
-    many[Route].add { new UserRoute[F](_: UserRepo[F]).route }
+  def OrderRouteModule[F[_]: TagK: ToFuture] = new ModuleDef {
+    many[Route].add { new OrderRoute[F](_: OrderRepo[F]).route }
     addImplicit[ToFuture[F]]
   }
 }

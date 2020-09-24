@@ -5,7 +5,6 @@ import cats.Monad
 import cats.effect.{Bracket, Resource}
 import distage.{ModuleDef, TagK}
 import org.daron.distage.FromFuture
-import tofu.lift.UnsafeExecFuture
 import tofu.syntax.monadic._
 
 object AkkaSystem {

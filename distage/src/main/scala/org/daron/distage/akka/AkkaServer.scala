@@ -3,52 +3,62 @@ package org.daron.distage.akka
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
+import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import cats.Functor
+import cats.Monad
 import cats.effect.{Bracket, Resource}
-import cats.syntax.functor._
 import distage.{ModuleDef, TagK}
 import org.daron.distage.FromFuture
-import org.daron.distage.http.UserRoute
 import tofu.logging.Logging
 import tofu.syntax.logging._
+import tofu.syntax.monadic._
 
 import scala.util.{Failure, Success}
 
 object AkkaServer {
 
-  private def bind[F[_]: FromFuture: Logging](route: Route, system: ActorSystem): F[Http.ServerBinding] = {
+  private def bind[F[_]: Monad: FromFuture: Logging](routes: Set[Route], system: ActorSystem): F[Http.ServerBinding] = {
     implicit val ec = system.dispatcher
     implicit val s  = system
 
     val host = "localhost"
     val port = 8080
 
-    FromFuture[F].fromFuture {
+    val route = routes.reduce(_ ~ _)
+
+    val binding: F[ServerBinding] = FromFuture[F].fromFuture {
       val binding = Http().newServerAt(host, port).bind(route)
 
       binding.onComplete {
-        case Success(_) => info"AkkaHttp server started on port $port"
-        case Failure(_) => error"Failed to bind to $port"
+        case Success(_) => println(s"AkkaHttp server started on port $port")
+        case Failure(_) => println(s"Failed to bind to $port")
       }
 
       binding
     }
+
+    for {
+      _ <- info"Starting server"
+      b <- binding
+      _ <- info"Started"
+    } yield b
   }
 
-  private def unbind[F[_]: Functor: FromFuture](binding: Http.ServerBinding): F[Unit] = {
-    FromFuture[F].fromFuture(binding.unbind()).void
-  }
+  private def unbind[F[_]: Monad: FromFuture: Logging](binding: Http.ServerBinding): F[Unit] = for {
+    _ <- info"Stopping server"
+    _ <- FromFuture[F].fromFuture(binding.unbind())
+    _ <- info"Stopped"
+  } yield ()
 
-  def resource[F[_]: Functor: FromFuture: Logging](userRoute: UserRoute[F], system: ActorSystem): Resource[F, ServerBinding] =
-    Resource.make(bind[F](userRoute.route, system))(unbind[F])
+  def resource[F[_]: Monad: FromFuture: Logging](routes: Set[Route], system: ActorSystem): Resource[F, ServerBinding] =
+    Resource.make(bind[F](routes, system))(unbind[F])
 
   def AkkaServerModule[F[_]: TagK: Logging: Bracket[*[_], Throwable]: FromFuture] = new ModuleDef {
     addImplicit[Bracket[F, Throwable]]
     make[ServerBinding].fromResource(resource[F] _)
     addImplicit[Logging[F]]
     addImplicit[FromFuture[F]]
-    addImplicit[Functor[F]]
+    addImplicit[Monad[F]]
   }
 
 }
