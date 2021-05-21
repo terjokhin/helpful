@@ -1,0 +1,15 @@
+<configuration debug="false">
+
+    <variable name="LEVEL" value="${LOG_LEVEL:-DEBUG}"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="tofu.logging.ELKLayout"/>
+        </encoder>
+    </appender>
+
+    <root level="${LEVEL}">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+</configuration>

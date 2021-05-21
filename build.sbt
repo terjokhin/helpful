@@ -16,12 +16,21 @@ lazy val distage = project
     libraryDependencies ++= Izumi.all
   )
 
+lazy val tofu = project
+  .in(file("tofu"))
+  .settings(
+    common,
+    name := "tofu",
+    scalacOptions ++= defaultOptions,
+    scalacOptions += "-Ymacro-annotations"
+  )
+
 lazy val common = Seq(
   organization := "org.daron",
-  scalaVersion := "2.13.3",
-  libraryDependencies ++= Akka.all ++ Cats.all ++ Circe.all ++ Tofu.all ++ MUnit.all ++ Other.all,
+  scalaVersion := "2.13.6",
+  libraryDependencies ++= Akka.all ++ Cats.all ++ Circe.all ++ Tofu.all ++ MUnit.all ++ Http4s.all ++ Other.all,
   libraryDependencies += compilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1"),
-  libraryDependencies += compilerPlugin("org.typelevel" %% "kind-projector" % "0.11.0" cross CrossVersion.full)
+  libraryDependencies += compilerPlugin("org.typelevel" %% "kind-projector" % "0.13.0" cross CrossVersion.full)
 )
 
 lazy val defaultOptions = Seq(

@@ -17,20 +17,21 @@ object Dependencies {
   }
 
   object Tofu {
-    private val tofuVersion = "0.7.9"
-    val core                = "ru.tinkoff" %% "tofu-core"       % tofuVersion
-    val derivation          = "ru.tinkoff" %% "tofu-derivation" % tofuVersion
-    val logging             = "ru.tinkoff" %% "tofu-logging"    % tofuVersion
+    private val tofuVersion = "0.10.2"
+    val core                = "tf.tofu" %% "tofu-core"       % tofuVersion
+    val concurrent          = "tf.tofu" %% "tofu-concurrent" % tofuVersion
+    val derivation          = "tf.tofu" %% "tofu-derivation" % tofuVersion
+    val logging             = "tf.tofu" %% "tofu-logging"    % tofuVersion
 
-    val all = Seq(core, derivation, logging)
+    val all = Seq(core, concurrent, derivation, logging)
   }
 
   object Cats {
-    private val version = "2.2.0"
+    private val version = "2.6.1"
     val core            = "org.typelevel" %% "cats-core"   % version
-    val effect          = "org.typelevel" %% "cats-effect" % version
+    val effect          = "org.typelevel" %% "cats-effect" % "2.5.1"
 
-    private val taglessVersion = "0.11"
+    private val taglessVersion = "0.14.0"
     val tagless                = "org.typelevel" %% "cats-tagless-macros" % taglessVersion
 
     val all = Seq(core, effect, tagless)
@@ -38,10 +39,21 @@ object Dependencies {
 
   object Circe {
     private val version = "0.13.0"
-    val core            = "io.circe" %% "circe-core"    % version
-    val generic         = "io.circe" %% "circe-generic" % version
+    val core            = "io.circe" %% "circe-core"           % version
+    val generic         = "io.circe" %% "circe-generic"        % version
+    val extras          = "io.circe" %% "circe-generic-extras" % version
+    val parser          = "io.circe" %% "circe-parser"         % version
 
-    val all = Seq(core, generic)
+    val all             = Seq(core, generic, extras, parser)
+  }
+
+  object Http4s {
+    private val version = "0.21.23"
+
+    val dsl             = "org.http4s" %% "http4s-dsl"          % version
+    val server          = "org.http4s" %% "http4s-blaze-server" % version
+    val json            = "org.http4s" %% "http4s-circe"        % version
+    val all             = Seq(dsl, server, json)
   }
 
   object MUnit {
