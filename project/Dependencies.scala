@@ -44,16 +44,25 @@ object Dependencies {
     val extras          = "io.circe" %% "circe-generic-extras" % version
     val parser          = "io.circe" %% "circe-parser"         % version
 
-    val all             = Seq(core, generic, extras, parser)
+    val all = Seq(core, generic, extras, parser)
   }
 
   object Http4s {
     private val version = "0.21.23"
-
     val dsl             = "org.http4s" %% "http4s-dsl"          % version
     val server          = "org.http4s" %% "http4s-blaze-server" % version
     val json            = "org.http4s" %% "http4s-circe"        % version
-    val all             = Seq(dsl, server, json)
+
+    val all = Seq(dsl, server, json)
+  }
+
+  object Trace {
+    private val version = "0.11.0"
+    val core            = "io.janstenpickle" %% "trace4cats-core"         % version
+    val inject          = "io.janstenpickle" %% "trace4cats-inject"       % version
+    val logsExporter    = "io.janstenpickle" %% "trace4cats-log-exporter" % version
+
+    val all = Seq(core, inject, logsExporter)
   }
 
   object MUnit {
@@ -72,7 +81,8 @@ object Dependencies {
 
   object Other {
     val logbackClassic = "ch.qos.logback" % "logback-classic" % "1.2.3"
+    val log4Cats       = "org.typelevel" %% "log4cats-slf4j"  % "1.3.1"
 
-    val all = Seq(logbackClassic)
+    val all = Seq(logbackClassic, log4Cats)
   }
 }

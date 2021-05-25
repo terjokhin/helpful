@@ -1,15 +1,20 @@
 <configuration debug="false">
 
-    <variable name="LEVEL" value="${LOG_LEVEL:-DEBUG}"/>
+    <variable name="LEVEL" value="${LOG_LEVEL:-INFO}"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
-            <layout class="tofu.logging.ELKLayout"/>
+        <encoder>
+            <pattern>%white(%d{HH:mm:ss.SSS}) %highlight(%-5level) %cyan(%logger{50}) - %msg %n</pattern>
         </encoder>
     </appender>
 
     <root level="${LEVEL}">
         <appender-ref ref="STDOUT"/>
     </root>
+
+    <logger name="org.http4s.blazecore" level="WARN"/>
+    <logger name="org.http4s.blaze" level="WARN"/>
+    <logger name="org.http4s.client.PoolManager" level="WARN"/>
+    <logger name="org.http4s.client.blaze" level="WARN"/>
 
 </configuration>
